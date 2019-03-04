@@ -23,33 +23,58 @@ Note: There are four “primitive” types in TypeScript: strings, booleans, num
 
 `any`: the great (and *terrible*) escape hatch.
 
-	function madWithPower(noLimits: any) {
-	  return noLimits.noHelpEither.ohNo;
-	}
+```ts
+function madWithPower(noLimits: any) {
+  return noLimits.noHelpEither.ohNo;
+}
 	
 	madWithPower("just a string");  // 💥 at runtime
-	// "TypeError: undefined is not an object
-	//     (evaluating 'noLimits.noHelpEither.ohNo')"
+// "TypeError: undefined is not an object
+//     (evaluating 'noLimits.noHelpEither.ohNo')"
+```
 
 Note: TypeScript gives us an escape hatch, and I’ll tell you about it up front because it’s a useful tool while you’re converting your codebase, and for *rare* occasions after that. But it’s also *dangerous*.
 
-The `any` type is exactly what it sounds like. You’re telling TypeScript, “This can be anything, and don’t check me on *anything* I do with it.” When you’re first converting an existing codebase, sometimes you *have* to use this because it would be far too painful and too time-consuming to figure out every single type related to a given module as you go. We’ll see that in a few when we actually start converting some JavaScript over to TypeScript.
+The `any` type is exactly what it sounds like. You’re telling TypeScript, “This can be anything, and don’t check me on *anything* I do with it.” Worse, it *infects* its context. Once you use it for a given item, TS basically throws away everything it knows about that item.
 
-But it also means TypeScript *cannot help you* with anything marked as being of the type `any`. No autocompletion. No type errors. Nothing. `any` is an escape hatch, but once you *do* get your types written down, you should use it as a tool of last resort and be *very* careful with runtime checks when you do bust it out.
+That means TypeScript *cannot help you* with anything marked as being of the type `any`. No autocompletion. No type errors. Nothing. `any` is an escape hatch, but once you *do* get your types written down, you should use it as a tool of last resort and be *very* careful with runtime checks when you do bust it out.
+
+---
+
+#### `any`
+
+```ts
+// As of TypeScript 3.4, the compiler doesn’t understand that
+// `somethingFine` is equivalent with the type `Neato`. See
+// <https://github.com/Microsoft/TypeScript/issues/12345> for
+// details.
+let somethingWeird = (somethingFine as any) as Neato;
+```
+
+Note: I strongly recommend that you *never* use `any` except in very specific scenarios where it the TypeScript compiler has already fallen down for some reason—and then leave a detailed comment explaining *why* you had to do that.
+
+Now, what about the times when a function legitimately *can* handle literally *any* input you throw at it? For that, TypeScript has a different tool: `unknown`.
 
 ---
 
 #### `unknown`
 
-`‌``‌
-TODO
-``‌`
+<!-- TODO: fill in the example -->
 
-Note: instead of `any`, most of the time you want to use `unknown`. `unknown` is like `any` in that TS doesn’t know what it is, but instead of letting you do whatever you want with it without checking, TypeScript requires that you figure out what you’re dealing with before it’ll let you do anything with it. This ends up being what we actually want most of the time: we don’t know what this thing we got handed was, but we can do a little work at runtime to make handling it safe! And as we’ll talk about in a bit, TS is clever enough to understand the implications of these kinds of runtime checks!
+```ts
+function handleInput(input: unknown): SanitizedInput {
+}
+```
+
+Note: instead of `any`, most of the time you want to use `unknown`. `unknown` is like `any` in that TS doesn’t know what it is, but instead of letting you do *whatever you want* with it, TypeScript won’t let you do *anything* with it unless you explicitly do the work to figure out what type it actually is.
+
+This ends up being what we actually want most of the time: we don’t know what this thing we got handed was, but we can do a little work at runtime to make handling it safe! And as we’ll talk about in a bit, TS is clever enough to understand the implications of these kinds of runtime checks!
 
 ---
 
 #### Type ascriptions
+
+<!-- TODO: move this -- it’s very late in the lecture -->
 
 Let’s write some basic types!
 
