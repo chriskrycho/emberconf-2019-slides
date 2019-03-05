@@ -1,20 +1,115 @@
-### Type signatures
-
-How do we actually write down these types?
-
-Note: So let’s talk about how we actually write down types to use in TypeScript. That’ll give us the foundation we need for using them in the context of Ember.js specifically.
-
 ---- 
 
-#### Basic types
+### [fit] Types
+#### [fit] What even are they?
+
+----
+
+### Types
+#### [fit] Types in JavaScript
 
 - Primitive types: `boolean`, `string`, `number`, `symbol`
-- Objects: `{ name: string }`
-- Arrays: `Array<number>` or `number[]` 
+- Objects: `{ name: "Chris" }`
+- Arrays: `[1, 2, 3]`
+- Classes: `class Person { }`
 
-Note: There are four “primitive” types in TypeScript: strings, booleans, numbers, and symbols. There are also *object* and *array* types.
+^There are four “primitive” types in JavaScript: strings, booleans, numbers, and symbols. There are also *objects* and *arrays*, and in their own special category, there are *classes*.
 
-- Object types look like object literals, but with *types* instead of *values* after the name of the field.
+----
+
+### Types
+#### [fit] Types in TypeScript
+
+- Primitive types: `boolean`, `string`, `number`, `symbol`
+- Objects: `{ name: "Chris" }`
+- Arrays: `[1, 2, 3]`
+- Classes: `class Person { }`
+
+…and a few more!
+
+^TypeScript has the *same* sets of types (and a couple more we'll see in a minute).
+
+----
+
+### Types
+#### [fit] Compile-time and Run-time
+
+JavaScript and TypeScript both have types.
+
+The difference is when those types matter!
+
+----
+
+### Types
+#### Compile-time and Run-time
+
+JavaScript types exist at *runtime*:
+
+```js
+class Person {
+	constructor(name) {
+		this.name = name;
+	}
+}
+
+const me = new Person("Chris Krycho");
+me.greet();  // RUNTIME ERROR
+```
+
+> `TypeError: foo is not a function`
+
+----
+
+### Types
+#### Compile-time and Run-time
+
+TypeScript types exist at *compile time*:
+
+```ts
+class Person {
+	name: string;
+
+	constructor(name: string) {
+		this.name = name;
+	}
+}
+
+const me = new Person("Chris Krycho");
+me.greet();  // BUILD TIME ERROR
+```
+
+> `Property 'greet' does not exist on type 'Person'.`
+
+----
+
+### Types
+#### [fit] Type Signatures
+
+How do I tell TypeScript what types these things are, anyway?
+
+^So let’s talk about how we actually write down types to use in TypeScript. That’ll give us the foundation we need for using them in the context of Ember.js specifically.
+
+----
+
+### Types
+#### Type Signatures
+
+You often don't have to do anything!
+
+----
+
+### Type signatures
+#### Types in TypeScript
+##### [fit] `number`s
+
+----
+
+### Type signatures
+#### Types in TypeScript
+##### [fit] `string`s
+
+
+^- Object types look like object literals, but with *types* instead of *values* after the name of the field.
 - Array types can be written two ways: as `Array<{the type, like "number" here}>` or `{the type, like "number" here}` followed by `[]`. We’ll come back to the version with `Array` written out explicitly in a few.
 
 ---- 
@@ -78,20 +173,24 @@ This ends up being what we actually want most of the time: we don’t know what 
 
 Let’s write some basic types!
 
-	let myName: string = "Chris";
-	let theAnswer: number = 42;
-	let aLie: boolean = false;
-	
-	function stringLength(s: string): number {
-	  return s.length;
-	}
-	
-	let toString = (n: any): string => `${n}`;
+```ts
+let myName: string = "Chris";
+let theAnswer: number = 42;
+let aLie: boolean = false;
 
-Note: So when you’re using these types in your program, you’ll need to write down some types! Here are some types of things you might want to know how to write down:
 
-- the primitive types
-- functions
+function stringLength(s: string): number {
+	return s.length;
+}
+
+
+let toString = (n: any): string => `${n}`;
+```
+
+^So when you’re using these types in your program, you’ll need to write down some types! Here are some types of things you might want to know how to write down:
+
+^- the primitive types
+^- functions
 
 ---- 
 
@@ -99,18 +198,41 @@ Note: So when you’re using these types in your program, you’ll need to write
 
 Most of those we didn’t actually need!
 
-	let myName = "Chris";  // automatically `string`
-	let theAnswer = 42;  // automatically `number`
-	let aLie = false;  // automatically `boolean`
-	
-	function stringLength(s: string) {
-	  return s.length;
-	}  // automatically returns `number`
-	
-	// automatically returns string
-	const toString = (n: any) => `${n}`;
+```ts
+let myName = "Chris";
+let theAnswer = 42;
+let aLie = false;
 
-Note: A lot of times, you *won’t* have to write down types. Anywhere you assign a value, TypeScript *infers* the type for you. Similarly, TypeScript will figure out function return types for you.
+
+function stringLength(s: string) {
+	return s.length;
+}
+
+
+const toString = (n: any) => `${n}`;
+```
+
+---- 
+
+##### Type inference
+
+Most of those we didn’t actually need!
+
+```ts
+let myName = "Chris";  // automatically `string`
+let theAnswer = 42;    // automatically `number`
+let aLie = false;      // automatically `boolean`
+
+// automatically returns `number`
+function stringLength(s: string) {
+	return s.length;
+}
+
+// automatically returns string
+const toString = (n: any) => `${n}`;
+```
+
+^A lot of times, you *won’t* have to write down types. Anywhere you assign a value, TypeScript *infers* the type for you. Similarly, TypeScript will figure out function return types for you.
 
 ---- 
 
