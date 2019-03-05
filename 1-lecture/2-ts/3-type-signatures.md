@@ -363,9 +363,11 @@ function whatIsThis(untypedThing) {
 
 ^You also have to write function *argument* types explicitly pretty much all the time; TS doesn’t try to do total program inference like some other languages do.
 
-^Finally, when using *generic types*, which we’ll talk about in a minute, it will eventually fall over even when *you* can see that there’s only a single type it could be. In that case, you *do* have to write things out explicitly.
+^Finally, when using *generic types*, which we’ll talk about in a minute, it will often fall over even when *you* can see that there’s only a single type it could be. In that case, you *do* have to write things out explicitly.
 
----- 
+----
+
+<!-- TODO: keep working from here -->
 
 ### Types
 
