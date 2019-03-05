@@ -402,7 +402,7 @@ madWithPower("just a string");  // 💥 at runtime
 ### Types
 #### `any`
 
-If you *must* `any`… give your colleagues some help!
+If you *must* use `any`… give your colleagues some help!
 
 ```ts
 // As of TypeScript 3.4, the compiler doesn’t understand that
