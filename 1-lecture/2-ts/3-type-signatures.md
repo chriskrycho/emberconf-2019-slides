@@ -422,7 +422,8 @@ function whatIsThis(breakfast: { wafflesPlease: boolean }) {
 
 ---
 
-### [fit] Aside: _**strictness**_
+### Types
+#### [fit] Aside: _**strictness**_
 
 - TypeScript can be more or less “strict.”
 - Configure it in `tsconfig.json` (with lots of other options)
@@ -489,23 +490,78 @@ let maybeMyName?: string = null;
 ### Types
 #### Classes
 
-Just like classes in JavaScript… with type annotations!
-
 ```ts
 class Person {
   age: number;
   name?: string;
   
-  constructor(age, name?: string) {
+  constructor(age: number, name?: string) {
     this.age = age;
+    this.name = name;
+  }
+
+  greet() {
+    let greeting = this.name ? `Hi, I'm ${this.name}!` : "Hey!"
+    console.log(`${greeting} I'm ${this.age} years old`);
+  }
+}
+```
+
+^Classes in TypeScript are just like ES6 classes in JavaScript… with type annotations!
+
+^I'm not going to dive into the details of classes today, as they're not TypeScript specific. They're just syntax sugar for normal prototypal inheritance. The point *here* is that they let you describe the shape of the class: the types that can live on it.
+
+^You write these types just like you do types elsewhere.
+
+---
+
+### Types
+#### Classes
+##### Initializers
+
+```ts
+class Person {
+  age = 0;
+  name?: string;
+
+  constructor(age?: number, name?: string) {
+    if (age) {
+      this.age = age;
+    }
+
     this.name = name;
   }
 }
 ```
 
+^We also have *field initializer* syntax: we can give a given field a default value. (As we'll see later, this works with Ember correctly, too! If you checked things out any time in 2017 or 2018, that wasn't true, but we collaborated with the Ember core team and they fixed it.)
+
 ---
 
+### Types
+#### Classes
+##### Initializers (cont'd.)
+
+```ts
+class Person {
+  age = 0;
+  name?: string; // INITIALIZED TO `undefined`
+
+  constructor(age?: number, name?: string) {
+    if (age) {
+      this.age = age;
+    }
+
+    this.name = name;
+  }
+}
+```
+
+^An important thing to note: declaring a type *initializes its value to `undefined`* if you're using Babel to compile your TypeScript. That's because the specification for ES6 classes says defining an item on a type (without a type annotation, of course!) does that. This has performance benefits for the JS runtimes. If you compile with TypeScript's own compiler, that's *not* true (though hopefully it will change to match the spec in the future). We'll talk about how both Babel and TypeScript compilers are used in ember-cli-typescript in a little bit.
+
 <!-- TODO: keep working from here -->
+
+---
 
 ### Types
 
@@ -587,21 +643,23 @@ Note: Since TypeScript is all about shapes, how do we write them
 
 ##### Writing shapes: `type`
 
-  function withGnarly(arg: {
-    a: string[];
-    b: number;
-    c: { some: boolean };
-  }): boolean { /* ... */ }
-  
-  type Arg = {
-    a: string[];
-    b: number;
-    c: { some: boolean };
-  };
-  
-  function withGnarly(arg: Arg): boolean { /* ... */ }
+```ts
+function withGnarly(arg: {
+  a: string[];
+  b: number;
+  c: { some: boolean };
+}): boolean { /* ... */ }
 
-Note: A type alias is a way of telling TypeScript “When I use this name, it’s just a shorthand for this shape!” We can write shapes inline, but that gets nasty quickly. So we can create an alias for them and use that instead.
+type Arg = {
+  a: string[];
+  b: number;
+  c: { some: boolean };
+};
+
+function withGnarly(arg: Arg): boolean { /* ... */ }
+```
+
+^A type alias is a way of telling TypeScript “When I use this name, it’s just a shorthand for this shape!” We can write shapes inline, but that gets nasty quickly. So we can create an alias for them and use that instead.
 
 ---
 
