@@ -1,9 +1,9 @@
----- 
+---
 
 ### [fit] Types
 #### [fit] What even are they?
 
-----
+---
 
 ### Types
 #### [fit] Types in JavaScript
@@ -16,7 +16,7 @@
 
 ^There are four “primitive” types in JavaScript: strings, booleans, numbers, and symbols. There are also *objects* and *arrays*, and in their own special category, there are *classes*.
 
-----
+---
 
 ### Types
 #### [fit] Types in TypeScript
@@ -31,7 +31,7 @@
 
 ^TypeScript has the *same* sets of types (and a couple more we'll see in a minute).
 
-----
+---
 
 ### Types
 
@@ -43,7 +43,7 @@ JavaScript and TypeScript both have types.
 
 The difference is *when those types matter*!
 
-----
+---
 
 ### Types
 #### Compile-time and Run-time
@@ -60,7 +60,7 @@ me.greet();  // RUNTIME ERROR
 
 > TypeError: foo is not a function
 
-----
+---
 
 ### Types
 #### Compile-time and Run-time
@@ -77,7 +77,7 @@ me.greet();  // BUILD TIME ERROR
 
 > Property 'greet' does not exist on type '{ name: string; }'.
 
-----
+---
 
 ### Types
 
@@ -89,7 +89,7 @@ How do I tell TypeScript what types these things are, anyway?
 
 ^So let’s talk about how we actually write down types to use in TypeScript. That’ll give us the foundation we need for using them in the context of Ember.js specifically.
 
-----
+---
 
 ### Types
 #### Type Signatures
@@ -102,7 +102,7 @@ let variableName: ItsType = /* its value */;
 //          The type signature
 ```
 
-----
+---
 
 ### Types
 #### Type Signatures
@@ -115,7 +115,7 @@ let tsIsCool: boolean = true;
 //     The type signature
 ```
 
-----
+---
 
 ### Types
 #### Type Signatures
@@ -128,7 +128,7 @@ let age: number = 1;
 // The type signature
 ```
 
-----
+---
 
 ### Types
 #### Type Signatures
@@ -141,7 +141,7 @@ let name: string = "Chris";
 // The type signature
 ```
 
-----
+---
 
 ### Types
 #### Type Signatures
@@ -154,7 +154,7 @@ let theAnswer: Symbol = Symbol(42);
 //      The type signature
 ```
 
-----
+---
 
 ### Types
 #### Type Signatures
@@ -169,7 +169,7 @@ let person: { name: string } = { name: "Chris" };
 
 ^Object types look like object literals, but with *types* instead of *values* after the name of the field.
 
-----
+---
 
 ### Types
 #### Type Signatures
@@ -182,7 +182,7 @@ let languages: string[] = ["TS", "Rust"];
 //       The type signature
 ```
 
-----
+---
 
 ### Types
 #### Type Signatures
@@ -199,7 +199,7 @@ let languages: Array<string> = ["TS", "Rust"];
 
 ^Array types can be written two ways: as `Array<{the type, like "number" here}>` or `{the type, like "number" here}` followed by `[]`. We’ll come back to the version with `Array` written out explicitly in a few.
 
-----
+---
 
 ### Types
 #### Type Signatures
@@ -216,7 +216,7 @@ function length(s: string): number {
 
 ^For functions, we can write the type of the inputs and the outputs.
 
-----
+---
 
 ### Types
 #### Type Signatures
@@ -231,7 +231,7 @@ let length = (s: string): number => s.length;
 
 ^This works for arrow functions, too!
 
-----
+---
 
 ### Types
 #### Type Signatures
@@ -252,7 +252,7 @@ class Person {
 
 ^We define a class just like we do in JavaScript, but annotate its *members*.
 
-----
+---
 
 ### Types
 
@@ -262,7 +262,7 @@ class Person {
 
 You often don't have to do anything!
 
-----
+---
 
 ### Types
 #### Type Inference
@@ -281,7 +281,7 @@ function length(s: string): number {
 let length = (s: string): number => s.length;
 ```
 
----- 
+---
 
 ### Types
 #### Type Inference
@@ -300,7 +300,7 @@ function length(s: string) {
 let length = (s: string) => s.length
 ```
 
----- 
+---
 
 ### Types
 #### Type Inference
@@ -321,7 +321,7 @@ let length = (s: string) => s.length
 
 ^A lot of times, you *won’t* have to write down types. Anywhere you assign a value, TypeScript *infers* the type for you. Similarly, TypeScript will figure out function return types for you.
 
----- 
+---
 
 ### Types
 #### Type Inference
@@ -343,29 +343,167 @@ let b = a + 2;
 
 ^TypeScript can infer a *lot*. It’ll even infer more interesting types we haven’t talked about yet, like *union* types. Here, TypeScript knows that we’re returning *either* a string or an object with a key named “say” which has a string value. And when we go to use it, we’ll have to check what the type is, or TS will yell at us.
 
----- 
+---
 
 ### Types
 #### Type Inference
+
+<br/>
+
 ##### [fit] But (unlike some languages) it is not *total*.
 
-```ts
-let aBunchOfThings = []; // has type `any[]`
+Sometimes we still have to write down types. 😢
 
-function whatIsThis(untypedThing) {
-  // Type error! We don't know that `untypedThing` *has*
-  // a `length` property! It's actually `any` here.
-  return untypedThing.length;
+^But (unlike some other programming languages) it can’t infer *everything*. Another way to say this is that it isn't *total*. There are interesting reasons for this, but for our purposes it's enough to know that sometimes we still have to write type annotations.
+
+---
+
+### Types
+#### Type Inference
+##### [fit] Limitations: **Arrays**
+
+This will not go well:
+
+```ts
+let aBunchOfThings = [];
+//  ╰───any[]────╯
+```
+
+Add a type annotation:
+
+```ts
+let aBunchOfThings: number[] = [];
+```
+
+^For example, if you create an empty array, you’ll need to tell it what *kind* of array, or it’ll fall back to the `any` type.
+
+---
+
+### Types
+#### Type Inference
+##### [fit] Limitations: **Functions**
+
+This might blow up at runtime:
+
+```ts
+function whatIsThis(breakfast) {
+  //                ╰──any──╯
+  return breakfast.wafflesPlease; // this might 💥 at runtime?
 }
 ```
 
-^But it can’t infer *everything*. For example, if you create an empty array, you’ll need to tell it what *kind* of array, or it’ll fall back to the `any` type.
+---
+
+### Types
+#### Type Inference
+##### [fit] Limitations: **Functions**
+
+Write it out:
+
+```ts
+function whatIsThis(breakfast: { wafflesPlease: boolean }) {
+  //                ╰─────────*not* any anymore!────────╯
+  return breakfast.wafflesPlease; // safe!
+}
+```
 
 ^You also have to write function *argument* types explicitly pretty much all the time; TS doesn’t try to do total program inference like some other languages do.
 
-^Finally, when using *generic types*, which we’ll talk about in a minute, it will often fall over even when *you* can see that there’s only a single type it could be. In that case, you *do* have to write things out explicitly.
+^That goes double when using *generic* functions (which we'll talk more about in a minute), like `_.map` from lodash.
 
-----
+---
+
+### Types
+#### Optional values
+
+<br>
+
+##### [fit] What about `null` and `undefined`**?**
+
+---
+
+### [fit] Aside: _**strictness**_
+
+- TypeScript can be more or less “strict.”
+- Configure it in `tsconfig.json` (with lots of other options)
+- `strict: true` is your friend!
+    - best balance of help to effort
+
+^TypeScript can check your code more or less strictly. You can set this in fine-grained detail in your `tsconfig.json`, which is home to *all* the configuration for your project. I recommend just using `strict: true`, though, which turns on *all* the strictness settings.
+
+^You might wonder about that: wouldn't it be easier to just start with the lightest set of changes and then slowly dial up the strictness. My personal experience says *no*: you just end up having to cover the same ground over and over and over again, which is exhausting. Even more importantly, though, `strict: true`is where TypeScript is *helping you out most*. At lower strictness, you still have to do most of the same work to annotate your code—those limitations we just saw are still in play!—but you don't get *most* of the help.
+
+^Now, opinions vary on that, even among the ember-cli-typescript core team! But that's my recommendation.
+
+---
+
+### Types
+#### Optional values
+##### [fit] *__Everything__* is optional with low strictness.
+
+```ts
+let myName: string = null;
+console.log(myName.length); // 💥 at runtime
+```
+
+☝🏼 That’s totally valid! 😢
+
+^If you turn off TypeScript's strictness settings around optionals, *everything* is optional. Your declarations basically mean “Whatever I say this is, but also `null` or `undefined`.” This means we get no help with our great nemesis: `undefined is not a function`.
+
+---
+
+### Types
+#### Optional values
+
+TypeScript can help! In `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "strictNullChecks": true
+  }
+}
+```
+
+^TypeScript *can* help us with this, if we set `strictNullChecks` (or, better, for all the reasons I outlined above), `strict` to `true` in the `compilerOptions` in `tsconfig.json`.
+
+---
+
+### Types
+#### Optional values
+##### [fit] Mark types as optional with **`?`**
+
+```ts
+let myName: string = null;
+//       type error!─╯
+
+let maybeMyName?: string = null;
+//             ╰───okay!───╯
+
+```
+
+^Once we have that switch on, we have to annotate optional types with a `?`. Otherwise, types are *not* nullable! We can only assign `null` or `undefined` to them if they are marked with that question mark.
+
+---
+
+### Types
+#### Classes
+
+Just like classes in JavaScript… with type annotations!
+
+```ts
+class Person {
+  age: number;
+  name?: string;
+  
+  constructor(age, name?: string) {
+    this.age = age;
+    this.name = name;
+  }
+}
+```
+
+---
 
 <!-- TODO: keep working from here -->
 
@@ -433,7 +571,7 @@ function handleInput(input: unknown): SanitizedInput {
 
 ^ This ends up being what we actually want most of the time: we don’t know what this thing we got handed was, but we can do a little work at runtime to make handling it safe! And as we’ll talk about in a bit, TS is clever enough to understand the implications of these kinds of runtime checks!
 
----- 
+---
 
 #### Writing shapes
 
@@ -445,7 +583,7 @@ Since TS is all about shapes, let’s write some!
 
 Note: Since TypeScript is all about shapes, how do we write them
 
----- 
+---
 
 ##### Writing shapes: `type`
 
@@ -465,7 +603,7 @@ Note: Since TypeScript is all about shapes, how do we write them
 
 Note: A type alias is a way of telling TypeScript “When I use this name, it’s just a shorthand for this shape!” We can write shapes inline, but that gets nasty quickly. So we can create an alias for them and use that instead.
 
----- 
+---
 
 ##### Writing shapes: `interface`
 
@@ -481,7 +619,7 @@ Note: A type alias is a way of telling TypeScript “When I use this name, it’
 
 Note: Another way to write a shape is with an `interface`, which can be *extended* and *implemented*. These are basically interchangeable with type aliases, except for those two differences. Here, the `WesternName` has all the properties of `Name` and adds in an optional `middle` and required `last` name. You can use these wherever you’d use a type alias… but also with classes!
 
----- 
+---
 
 ##### Writing shapes: `class`
 
@@ -489,7 +627,7 @@ TypeScript classes are just JavaScript classes with type annotations.
 
 Note: A TypeScript class is *basically* just a JavaScript class with type annotations for all the bits attached to it.
 
----- 
+---
 
 ##### Writing shapes: `class`
 
@@ -514,7 +652,7 @@ Note: A TypeScript class is *basically* just a JavaScript class with type annota
 
 Note: But it’s also worth remembering that a `class` declaration *also* defines a shape in TypeScript. So you can also think of it as being a way to define a shape and a way to *build an instance* of the shape at the same time.
 
----- 
+---
 
 ##### Writing shapes: `extends` and `implements`
 
@@ -529,7 +667,7 @@ Note: But it’s also worth remembering that a `class` declaration *also* define
 
 Note: classes can also implement interfaces and extend other classes. If they declare they implement an interface, TypeScript will check that everything the interface has, the class has! Meanwhile `extends` works just like it does in normal JavaScript: you attach to the prototype of the type you’re extending.
 
----- 
+---
 
 ##### Writing shapes: when to use each
 
@@ -541,7 +679,7 @@ Note: My basic tack is I start with a `type` alias, and rarely go beyond that. T
 
 I should note: I’m offering an opinionated take here. This actually runs up against Microsoft’s view a little bit – they basically say to use interfaces for everything and not to use type aliases at all, because things should *always* be open to being extended. I disagree! I often want to just write down a bunch of small types like LEGO blocks to fit together. But there’s room for different styles here, in any case.
 
----- 
+---
 
 #### “nullable” types: getting a handle on `null` and `undefined`!
 
@@ -552,7 +690,7 @@ Note: Next, one of the most important things TypeScript can help us with—I wou
 
 TypeScript gives us two tools we can combine to help us fix this problem: *optional* type annotations, and the *strict null checking* compiler option.
 
----- 
+---
 
 ##### “nullable” types: the “optional” annotation
 
@@ -572,7 +710,7 @@ Here, for example, we have a function which joins two strings... but only if the
 
 Likewise, if we were trying to build up a not-so-Western-focused version of a *person* type, we might say that everyone has an age, and that there are also optional combinations of kinds of names. To build a person, we always need an `age` value, but we can make a name with TODO *neither*, *either*, or *both* of the other keys.
 
----- 
+---
 
 ##### “nullable” types: strict null checking
 
@@ -585,7 +723,7 @@ Note: We can combine optional declarations with the `"strictNullChecking"` compi
   
 If you’re starting a *new* Ember app with TypeScript, I’d turn this flag on at the start. If you’re dealing with an existing app... well, that’s probably going to be too hard, but it’s worth aiming to get there eventually!
 
----- 
+---
 
 #### Generics
 
