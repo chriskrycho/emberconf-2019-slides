@@ -1031,32 +1031,50 @@ let somethingWeird = (somethingFine as any) as Neato;
 
 #### `unknown`
 
-<!-- TODO: fill in the example -->
-
 ```ts
-function handleInput(input: unknown): SanitizedInput {
+function handleInput(maybeAge: unknown): number {
+  if (typeof maybeAge === 'number') {
+    return maybeAge;
+  } else {
+    throw new Error('not a number!');
+  }
 }
 ```
 
-^Now, what about the times when a function legitimately *can* handle literally *any* input you throw at it? For that, TypeScript has a different tool: `unknown`.
+^Now, what about the times when a function legitimately *can* handle literally *any* input you throw at it? For that, TypeScript has a different tool: `unknown`. `unknown` is like `any` in that TS doesn’t know what it is, but instead of letting you do *whatever you want* with it, TypeScript won’t let you do *anything* with it unless you explicitly do the work to figure out what type it actually is.
 
-^Instead of `any`, most of the time you want to use `unknown`. `unknown` is like `any` in that TS doesn’t know what it is, but instead of letting you do *whatever you want* with it, TypeScript won’t let you do *anything* with it unless you explicitly do the work to figure out what type it actually is.
+^This ends up being what we actually want most of the time: we don’t know what this thing we got handed was, but we can do a little work at runtime to make handling it safe! And here, TS is smart enough to understand these kinds of checks. Here, TS *knows* that if you return at all, it has to be returning a `number`. It's no longer `unknown`.
 
-^ This ends up being what we actually want most of the time: we don’t know what this thing we got handed was, but we can do a little work at runtime to make handling it safe! And as we’ll talk about in a bit, TS is clever enough to understand the implications of these kinds of runtime checks!
+^So: use `unknown` instead of `any`; it's nearly always what you want.
 
 ---
 
+### Types
+
+<br>
+
+#### [fit] **Generics**
+
+^We're in the home stretch for the *main* sets of types in TypeScript—generics!
+
+---
+
+### Types
 #### Generics
 
-  let numbers = [1, 2, 3]; // Array<number>
-  let strings = ['a', 'b', 'c']; // Array<string>
-  let things = [
-    { thing: 1 },
-    { thing: 2 },
-  ]; // Array<{thing: number }>
+```ts
+let numbers = [1, 2, 3];       // Array<number>
 
-Note: I’m not going to spend a *lot* of time on generic types, although they’re both very *important* and very *powerful*. We’ll see some examples of them in the refactoring section, and I’ll talk about them in more detail then. However, I think it’s worth introducing them so you recognize the syntax, and talking a *little* about how to use them.
+let strings = ['a', 'b', 'c']; // Array<string>
 
-Generics let us capture things like the fact that we can have an array of just about anything: arrays of numbers, of strings, of objects, etc. If we want to be able write that down, especially for new types *we* build, we need a syntax for it, to tell the compiler what we mean. That’s what generics are.
+let things = [   // ─╮
+  { thing: 1 },  //  ├── Array<{thing: number}>
+  { thing: 2 },  //  │
+];               // ─╯
+```
 
-You can see in the example here: an array can be an array of all sorts of things – numbers, strings, complex objects, etc. If we build up our *own* containers that can hold more than one kind of thing, we can do that with generic types. I don’t expect to cover this much today, but you’ll *see* it, so it’s helpful to know what the notation means!
+^I’m not going to spend a *lot* of time on generic types, although they’re both very *important* and very *powerful*. We’ll see some examples of them in the refactoring section, and I’ll talk about them in more detail then. However, I think it’s worth introducing them so you recognize the syntax, and talking a *little* about how to use them.
+
+^Generics let us capture things like the fact that we can have an array of just about anything: arrays of numbers, of strings, of objects, etc. If we want to be able write that down, especially for new types *we* build, we need a syntax for it, to tell the compiler what we mean. That’s what generics are.
+
+^You can see in the example here: an array can be an array of all sorts of things – numbers, strings, complex objects, etc. If we build up our *own* containers that can hold more than one kind of thing, we can do that with generic types. We'll see one *very* important example of this in the session where we dig into using TypeScript with Ember!
