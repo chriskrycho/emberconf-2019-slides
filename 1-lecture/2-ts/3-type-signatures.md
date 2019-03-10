@@ -1029,7 +1029,9 @@ let somethingWeird = (somethingFine as any) as Neato;
 
 ---
 
-#### `unknown`
+### Types
+#### Dealing with ignorance
+##### `unknown`
 
 ```ts
 function handleInput(maybeAge: unknown): number {
