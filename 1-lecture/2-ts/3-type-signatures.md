@@ -423,11 +423,11 @@ function whatIsThis(breakfast: { wafflesPlease: boolean }) {
 ---
 
 ### Types
-#### [fit] Aside: _**strictness**_
+#### [fit] Aside: _**strictness**_ in TypeScript
 
 - TypeScript can be more or less “strict.”
 - Configure it in `tsconfig.json` (with lots of other options)
-- `strict: true` is your friend!
+- `"strict": true` is your friend!
     - best balance of help to effort
 
 ^TypeScript can check your code more or less strictly. You can set this in fine-grained detail in your `tsconfig.json`, which is home to *all* the configuration for your project. I recommend just using `strict: true`, though, which turns on *all* the strictness settings.
@@ -559,17 +559,56 @@ class Person {
 
 ^An important thing to note: declaring a type *initializes its value to `undefined`* if you're using Babel to compile your TypeScript. That's because the specification for ES6 classes says defining an item on a type (without a type annotation, of course!) does that. This has performance benefits for the JS runtimes. If you compile with TypeScript's own compiler, that's *not* true (though hopefully it will change to match the spec in the future). We'll talk about how both Babel and TypeScript compilers are used in ember-cli-typescript in a little bit.
 
-<!-- TODO: keep working from here -->
+---
+
+### Types
+#### What about POJOs?
+
+Classes exist at *runtime*.
+
+What if we want to describe a type only at *compile time*?
+
+```ts
+let me = {
+  name: "Chris Krycho",
+  age: 31,
+}
+```
+
+---
+
+<!-- TODO: PICK UP HERE -->
+
+### Types
+
+TypeScript has *two* tools to help us here.
+
+#### [fit] **`interface`** (types)
+#### [fit] **`type`** (type aliases)
 
 ---
 
 ### Types
+#### **`interface`** (types)
+
+---
+
+### Types
+#### **`type`** (type aliases)
+
+---
+
+### Types
+#### Types are just shapes!
+
+---
 
 <br>
 
-#### [fit] `any`
-
-`any` is the great (and *terrible*) escape hatch.
+#### [fit] **`any`**
+##### [fit] the great
+##### [fit] \(and *terrible*)
+##### [fit] escape hatch
 
 ---
 
@@ -714,14 +753,16 @@ Note: But it’s also worth remembering that a `class` declaration *also* define
 
 ##### Writing shapes: `extends` and `implements`
 
-  class Person implements Name {
-    first: string;
-    age: number;
-  }
-  
-  class Programmer extends Person {
-    knownJSFrameworks: string[];
-  }
+```ts
+class Person implements Name {
+  first: string;
+  age: number;
+}
+
+class Programmer extends Person {
+  knownJSFrameworks: string[];
+}
+```
 
 Note: classes can also implement interfaces and extend other classes. If they declare they implement an interface, TypeScript will check that everything the interface has, the class has! Meanwhile `extends` works just like it does in normal JavaScript: you attach to the prototype of the type you’re extending.
 
