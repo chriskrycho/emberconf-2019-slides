@@ -1,4 +1,4 @@
-### Even snazzier kinds of types
+### Even snazzier types
 
 - enums
 - union types
@@ -10,6 +10,7 @@
 
 ---
 
+### Even snazzier types
 #### `enum`
 
 ```ts
@@ -30,6 +31,7 @@ fade(PrimaryColor.Red, 19);
 
 ---
 
+### Even snazzier types
 #### literal types
 
 ```ts
@@ -49,6 +51,7 @@ let hallo: Hallo = {
 
 ---
 
+### Even snazzier types
 #### union types
 
 ```ts
@@ -69,6 +72,7 @@ function mightFail(succeed: boolean): Validation {
 
 ---
 
+### Even snazzier types
 #### union types
 
 ```ts
@@ -86,6 +90,7 @@ if (yay.ok) {
 
 ---
 
+### Even snazzier types
 #### intersection types
 
 ```ts
@@ -101,6 +106,7 @@ let me: Being = { name: "Chris", mass: 72, age: 30 };
 
 ---
 
+### Even snazzier types
 #### tuples
 
 ```ts
@@ -118,6 +124,7 @@ type NameAndAge = [string, number];
 
 ---
 
+### Even snazzier types
 #### tuples
 
 ```ts
@@ -135,6 +142,7 @@ let good: NameAndAge = ["Chris Krycho", 30];
 
 ---
 
+### Even snazzier types
 #### tuples
 
 ```ts
