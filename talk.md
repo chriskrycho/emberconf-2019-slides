@@ -1,12 +1,155 @@
+footer: Supercharging Ember Octane with TypeScript ([bit.ly/ember-ts-2019](http://bit.ly/ember-ts-2019)) | Chris Krycho ([@chriskrycho](https://twitter.com/chriskrycho))
+slidenumbers: true
+
+[.hide-footer]
+
+<br>
+
+# [fit] Supercharging *__Ember Octane__*
+# [fit] with *__TypeScript__*
+
 ---
 
-### [fit] Types
+## [fit] Introductions
+
+<br>
+
+- Chris Krycho (me)
+- James Davis (TA)
+- Mike North (TA)
+
+^Hello, everyone, and welcome to the TypeScript Up Your Ember.js App workshop. I figured I’d start by introducing myself briefly and having my TAs introduce themselves.
+
+^I’m a staff software engineer at LinkedIn, formerly at Olo. While I was at Olo, I worked on an Ember.js application which had about 60,000 lines of TypeScript. I’m also one of the maintainers of ember-cli-typescript, and an all-around nerd! We started using TypeScript in our Ember app at Olo in late 2016—*well* before it was easy or especially useful. And now at LinkedIn, I’m working on figuring out how we’re going to convert one of the largest Ember apps in the world to TypeScript, so —happily—we’re now at a point where TypeScript is both easy *and* useful!
+
+^James Davis and Mike North are also around to help out today, and they've both been integral in making TypeScript viable in Ember over the last couple of years.
+
+^So now I’d like to get a bit of a feel for where everyone is at in the room. We’re going to cover basically the same material no matter what, but I can pitch my discussion and adjust course and adjust speed depending on what people’s experience levels look like.
+
+^- How many of you have written any TypeScript before?
+^- What about Flow?
+^- How many of you have written any typed language *at all* before?
+^	- C♯ or Java?
+^	- Elm, F♯, OCaml, ReasonML, PureScript, Haskell, etc.?
+^- And just for giggles: Idris, F*, Agda, or Coq?
+
+^Cool! That’s really helpful, and we’ll make a point to make sure no one gets left behind.
+
+^I’ll say this again and again, and I really mean it: if you have a question, if something was confusing, really for any reason at all: stop me, and ask questions. I’ve intentionally left plenty of time for that and everyone in here will learn this better if you *do* ask.
+
+---
+
+## Introductions
+### Schedule
+
+- 1:30–2:50: *basics of TypeScript* and *TypeScript in Ember*
+- 3:00–4:30: *practicing with TypeScript*
+
+Get the code here:
+
+- [bit.ly/ember-ts-2019](http://bit.ly/ember-ts-2019)
+
+^Before we jump in, let’s talk through the basic approach I’m planning to take, just so everyone is on the same page.
+
+^- From now till about 3:00, I’m going to talk through **the basics of TypeScript** and, at a very high level, **how it works in Ember** at a very high level. This is going to be kind of “lecture”-style, but *please* feel free to interrupt with questions. The point of this section is for us to go from *zero* to a point where the rest of the workshop makes good sense.
+
+^- When we wrap that up, we’ll take a short break, till 3pm. Breaks are really important because we all have to stretch and hit the bathroom, but they’re also really important in terms of *learning*. If we just try to crunch through, all of our brains will shut down. So we’ll let ourselves chill a bit, then dive back in.
+
+^- From 3:00 till about 4:15, we’ll work through **converting parts of the canonical “TODO MVC” Ember example app from JavaScript to TypeScript and Octane**. This will let us put into practice all the ideas we talk about in the first session. I will walk through that up here, but pausing regularly for questions, people who have gotten stuck, and so on.
+
+^- Finally, we’ll just spend the last 15 minutes on open discussion, questions, comments, etc. – anything we can answer, we’ll be happy to.
+
+^If any of you *have not* cloned the repository and run `yarn` to get everything set up, this first session is a good time to do that in the background. The link on the whiteboard here will take you straight to it. (https://github.com/chriskrycho/emberconf-2019)
+
+---
+
+<br>
+<br>
+<br>
+
+## [fit] What *is* **TypeScript**?
+
+---
+
+## What *is* TypeScript?
+
+- *Basically* a typed superset of JavaScript
+- *Strictly* a compile-to-JavaScript language
+- But close enough that we can think of it as "JS with types"
+
+^TypeScript is *basically* a typed superset of JavaScript. I say *basically* because there are a few constructs in TypeScript which don’t exist in JavaScript. We’ll talk about those in a few minutes, but the fact that those exist means TypeScript is *strictly speaking* a distinct language which compiles to JavaScript. For most purposes, though, it’s fine to think of it as a superset of JavaScript with types.
+
+---
+
+## What *is* TypeScript?
+
+- *Basically* a typed superset of JavaScript
+- *Strictly* a compile-to-JavaScript language
+- But close enough that we can think of it as "JS with types"
+
+### [fit] Cool, but why should I care?
+
+---
+
+## What *is* TypeScript?
+### Cool, but why should I care?
+
+[.build-lists: true]
+
+Three big developer experience differences:
+
+1. Always-up-to-date documentation for functions and classes
+2. Many fewer `undefined is not an object` errors
+3. Confident refactoring
+
+^So that’s all well and good, but *why should you care?* Maybe that’s interesting if you’re (like me) kind of weirdly obsessed with type systems. But what does it gain you as JavaScript developer every day? How does it make your life easier?
+
+^1. How many of you here like having docs for your functions? Now, how many of you would like it if those docs were always *right* and *up to date*? Well, the first thing about TypeScript is that that’s exactly what it gives you. My experience of using TypeScript is *not*, for the most part, the way I’ve felt in some other programming languages, where I’m writing down names of things just because. It’s more like just documenting “for this function to work *at all*, it needs you to pass in a thing that has *this property* on it”—and then finding out *in my editor* if I passed in the wrong thing, or if my function doesn’t return what the docs say it does. So that’s handy.
+
+^2. The second thing that makes TypeScript *really great* is that it legitimately helps us ship fewer “undefined is not an object” kinds of errors to production. And I care about that not in the abstract sense but because every single one of those I ship to production means *something didn’t work for a user*. It also means it’s time I have to spend hunting down the cause of that bug instead of building something new—whether that new thing is adding a feature, or making the app work offline, or building a whole new product, or whatever else. TypeScript doesn’t get the count to zero, like some programming languages can—but it helps, a *lot*.
+
+^3. The biggest developer experience bit is the one I've saved for last: you can refactor with *confidence*. In my experience, refactors in any significantly large JavaScript codebase are extremely difficult: it's really, really hard to know when you've actually caught *everything* impacted by a change. TypeScript lets you just start making changes and keep following the compiler's messages until you have updated *every* place affected. The first time you do that and build your project and *everything just works* feels amazing.
+
+---
+
+## What *is* TypeScript?
+### Cool, but why should I care?
+
+Three big developer experience differences:
+
+1. Always-up-to-date documentation for functions and classes
+2. Many fewer `undefined is not an object` errors
+3. Confident refactoring
+
+…*and* it’s not painful to use!
+
+^Finally, it’s worth note that it’s not *painful to use* in the way some typed languages have been. If I need to write “This function needs an object with a `quack` method on it that I can call” I can just write that inline, and we’ll see that in a few minutes! The types *cost* a lot less than they do in the sort of “typical” typed languages out there, which makes their relative value a lot higher, too.
+
+---
+
+## What *is* TypeScript?
+
+<br>
+
+### [fit] A tool to **supercharge**
+### [fit] your Ember (Octane!) development
+
+^In short, TypeScript is not just a "typed superset of JavaScript": it's a way to develop faster and more reliably, *especially* when you have to make changes! So let's dig in.
+
+---
+
+<br>
+
+### [fit] *__Types__*
+
+<br>
+
 #### [fit] What even are they?
 
 ---
 
 ### Types
-#### [fit] Types in JavaScript
+#### [fit] Types in **JavaScript**
 
 - Primitive types: `boolean`, `string`, `number`, `symbol`
 - Objects: `{ name: "Chris" }`
@@ -14,12 +157,14 @@
 - Functions
 - Classes
 
+<br>
+
 ^There are four “primitive” types in JavaScript: strings, booleans, numbers, and symbols. There are also *objects* and *arrays*, and in their own special category, there are *classes*.
 
 ---
 
 ### Types
-#### [fit] Types in TypeScript
+#### [fit] Types in **TypeScript**
 
 - Primitive types: `boolean`, `string`, `number`, `symbol`
 - Objects: `{ name: "Chris" }`
@@ -48,7 +193,45 @@ The difference is *when those types matter*!
 ### Types
 #### Compile-time and Run-time
 
-JavaScript types exist at *runtime*:
+This code has a *bug*.
+
+```js
+let me = {
+  name: "Chris Krycho"
+};
+
+me.greet();
+```
+
+<br>
+
+---
+
+### Types
+#### Compile-time and Run-time
+
+This code has a *bug*.
+
+[.code-highlight: 5]
+
+```js
+let me = {
+  name: "Chris Krycho"
+};
+
+me.greet();
+```
+
+<br>
+
+---
+
+### Types
+#### Compile-time and Run-time
+
+This code has a *bug*. In JavaScript, we learn at *runtime*:
+
+[.code-highlight: 5]
 
 ```js
 let me = {
@@ -65,17 +248,21 @@ me.greet();  // RUNTIME ERROR
 ### Types
 #### Compile-time and Run-time
 
-TypeScript types exist at *compile time*:
+This code has a *bug*. In TypeScript we learn at *compile* time.
+
+[.code-highlight: 5]
 
 ```ts
 let me = {
   name: "Chris Krycho"
 };
 
-me.greet();  // BUILD TIME ERROR
+me.greet();  // COMPILE ERROR
 ```
 
 > Property 'greet' does not exist on type '{ name: string; }'.
+
+^And this is the key. As fast as your test suite might be, and as quick as you can flip over to your browser, this is *much faster* feedback. And, as we'll see, it can be more thorough than most kinds of test suites in the world for refactoring tasks. Note that that doesn't make types a *replacement* for tests, but a *wonderful complement*. You put the two together and get out something *much* better than either alone.
 
 ---
 
@@ -92,9 +279,16 @@ How do I tell TypeScript what types these things are, anyway?
 ---
 
 ### Types
-#### Type Signatures
+#### Type Declarations
 
-variable name + `:` + name of type
+type declaration = variable name + `:` + name of type
+
+---
+
+### Types
+#### Type Declarations
+
+type declaration = variable name + `:` + name of type
 
 ```ts
 let variableName: ItsType = /* its value */;
@@ -102,10 +296,12 @@ let variableName: ItsType = /* its value */;
 //          The type signature
 ```
 
+^So given that, let's talk through those kinds of types I just mentioned!
+
 ---
 
 ### Types
-#### Type Signatures
+#### Type Declarations
 
 Booleans:
 
@@ -118,7 +314,7 @@ let tsIsCool: boolean = true;
 ---
 
 ### Types
-#### Type Signatures
+#### Type Declarations
 
 Numbers:
 
@@ -131,7 +327,7 @@ let age: number = 1;
 ---
 
 ### Types
-#### Type Signatures
+#### Type Declarations
 
 Strings:
 
@@ -144,7 +340,7 @@ let name: string = "Chris";
 ---
 
 ### Types
-#### Type Signatures
+#### Type Declarations
 
 Symbols:
 
@@ -157,7 +353,7 @@ let theAnswer: Symbol = Symbol(42);
 ---
 
 ### Types
-#### Type Signatures
+#### Type Declarations
 
 Objects:
 
@@ -172,7 +368,7 @@ let person: { name: string } = { name: "Chris" };
 ---
 
 ### Types
-#### Type Signatures
+#### Type Declarations
 
 Arrays:
 
@@ -185,7 +381,7 @@ let languages: string[] = ["TS", "Rust"];
 ---
 
 ### Types
-#### Type Signatures
+#### Type Declarations
 
 Arrays again:
 
@@ -202,7 +398,7 @@ let languages: Array<string> = ["TS", "Rust"];
 ---
 
 ### Types
-#### Type Signatures
+#### Type Declarations
 
 Functions:
 
@@ -219,7 +415,7 @@ function length(s: string): number {
 ---
 
 ### Types
-#### Type Signatures
+#### Type Declarations
 
 Arrow functions:
 
@@ -234,7 +430,7 @@ let length = (s: string): number => s.length;
 ---
 
 ### Types
-#### Type Signatures
+#### Type Declarations
 
 Classes:
 
@@ -564,6 +760,8 @@ class Person {
 ### Types
 #### Classes
 ##### Initializers (cont'd.)
+
+[.code-highlight: 3]
 
 ```ts
 class Person {
@@ -1080,3 +1278,556 @@ let things = [   // ─╮
 ^Generics let us capture things like the fact that we can have an array of just about anything: arrays of numbers, of strings, of objects, etc. If we want to be able write that down, especially for new types *we* build, we need a syntax for it, to tell the compiler what we mean. That’s what generics are.
 
 ^You can see in the example here: an array can be an array of all sorts of things – numbers, strings, complex objects, etc. If we build up our *own* containers that can hold more than one kind of thing, we can do that with generic types. We'll see one *very* important example of this in the session where we dig into using TypeScript with Ember!
+
+---
+
+## Types
+### Even snazzier types
+
+- enums
+- union types
+- intersection types
+- tuples
+- literal types
+
+^There are a handful more types you’ll see, and which can be *super* useful. I’m not going to dig particularly deep into any of these, but I did want to touch on them before we start talking about Ember.js and TypeScript together.
+
+---
+
+## Types
+### [fit] Even snazzier: `enum` types
+
+```ts
+enum PrimaryColor {
+  Red = 'FF0000',
+  Green = '00FF00',
+  Blue = '0000FF',
+};
+
+function fade(a: PrimaryColor, percent: number): string {/*...*/}
+
+fade(PrimaryColor.Red, 19);
+```
+
+^A TypeScript `enum` is *basically* just a convenient way to define an object and a set of types associated with its values – to be able to say “The only thing allowed here is one of the values of this specific object.” So here, for example, we could define an RGB colors type and then we *have* to pass in one of the `PrimaryColor` keys. We can’t pass in “purple” or even another hex color code string like `8800FF`!
+
+---
+
+## Types
+### [fit] Even snazzier: literal types
+
+```ts
+type Hallo = {
+  value: 'hallo';
+};
+
+let hallo: Hallo = {
+  // Type error! This isn't the *exact* string we specified!
+  value: 'ahoy',
+}
+```
+
+^*Literal* types are types where the only value they can have is the specific value you write down. Any kind of literal you can write in JavaScript – numbers, strings, booleans, symbols, arrays, objects, and crazy combinations of them – can be a *type* in TypeScript. So here, the `value` key in any `Hallo` type is *only* allowed to be the exact string “hallo”.
+
+^We’ll see a handy example of how we can use this in the *next* kind of type: union types.
+
+---
+
+## Types
+### [fit] Even snazzier: union types
+
+```ts
+type Ok = { ok: true; value: number };
+type Err = { ok: false; reason: string };
+type Validation = Ok | Err;
+
+function mightFail(succeed: boolean): Validation {
+  return succeed
+    ? { status: 'ok', value: 42 }
+    : { status: 'err', reason: '...you said to fail!' };
+}
+```
+
+^Union types are literally my favorite thing in TypeScript. They let you say “this thing can be *a* or *b*.” And that’s a really common scenario! For example, we’ve all probably experienced a time when a given function needs to be able to indicate either success or failure – for example, a validation.
+
+^With union types, we can write that out, and TypeScript will check us: if we try to return `{ ok: false, value: 12 }` or `{ ok: true, reason: "whatever, man, you're not the boss of me" }`, it will complain. Here, it’s leaning on the literal types: the `Ok` type must include *exactly* `ok: true` and `value: number` *or* `ok: false` and `reason: string`.
+
+---
+
+## Types
+### [fit] Even snazzier: narrowing
+
+```ts
+const yay = mightFail(true); // -> Validation
+if (yay.ok) {
+  console.log(yay.value);
+  // can't touch `yay.reason` here
+} else {
+  console.log(yay.reason);
+  // can't touch `yay.value` here.
+}
+```
+
+^What’s also neat is that once you return one of these, TypeScript can figure out the type from the `ok: true` or `ok: false`. If you’re in a place where it’s `ok: true`, you can get at `value` but not `reason`, and vice versa. As an aside: this works as a perfect complement to `unknown`!
+
+---
+
+## Types
+### [fit] Even snazzier types: intersection types
+
+```ts
+type HasName = { name: string };
+interface HasMass { mass: number }
+class LivingThing { age: number }
+
+type Being = HasName & HasMass & LivingThing;
+let me: Being = { name: "Chris", mass: 72, age: 30 };
+```
+
+^An *intersection* type is the counterpart to a *union* type. Instead of saying a value can be “this *or* that” it says the value is “this *and* that.” This is kind of like doing `extends` with an `interface`… except that you can just mix and match them however you want. (And notice that you can do intersections with any kind of TS shape!)
+
+---
+
+## Types
+### [fit] Even snazzier types: tuples
+
+[.code-highlight: 1]
+
+```ts
+type NameAndAge = [string, number];
+
+// valid!
+let good: NameAndAge = ["Chris Krycho", 30];
+
+// type error!
+let bad1: NameAndAge = [30, "Chris Krycho"];
+let bad2: NameAndAge = ["Chris Krycho", 30, { is: 'a nerd' }]
+```
+
+^TypeScript also lets use define *tuple* types. These look a little like array types, but they’re different in an important way: they have a set length, and they have a set *order*. So if we defined a type for name and age, like this…
+
+---
+
+## Types
+### [fit] Even snazzier types: tuples
+
+[.code-highlight: 1-4]
+
+```ts
+type NameAndAge = [string, number];
+
+// valid!
+let good: NameAndAge = ["Chris Krycho", 30];
+
+// type error!
+let bad1: NameAndAge = [30, "Chris Krycho"];
+let bad2: NameAndAge = ["Chris Krycho", 30, { is: 'a nerd' }]
+```
+
+^…then this would be valid…
+
+---
+
+## Types
+### [fit] Even snazzier types: tuples
+
+[.code-highlight: 1, 6-8]
+
+```ts
+type NameAndAge = [string, number];
+
+// valid!
+let good: NameAndAge = ["Chris Krycho", 30];
+
+// type error!
+let bad1: NameAndAge = [30, "Chris Krycho"];
+let bad2: NameAndAge = ["Chris Krycho", 30, { is: 'a nerd' }]
+```
+
+^…but these would *not*! because the order is wrong in the first one, and the second has too many values.
+
+^These are handy for return types where you need to return more than one things – like in promise chains. If you have more complicated structures, though, you’re usually better returning objects, because names can add a lot of clarity.
+
+---
+
+<br>
+## [fit] TypeScript—
+### [fit] **Questions?**
+
+^Okay, so that’s it for TypeScript itself. We did not cover *everything* in TypeScript, for sure, but we got through most stuff we’ll need. Any questions so far?
+
+---
+
+<br>
+
+## [fit] TypeScript in Ember
+<br>
+### [fit] …is **mostly** just TypeScript!
+
+^Using TypeScript in Ember is *mostly* just like using it in general, but there are a couple gotchas you should know about besides the things we'll talk through in the workshop.
+
+---
+
+## TypeScript in Ember
+### [fit] templates === 😬
+
+Currently, TypeScript *cannot* help us with:
+
+- template bindings (of any sort)
+- template action invocation
+
+^*Today*, TypeScript cannot help us with template bindings of any sort, including action invocation. So we can write down the types of things passed into a component, and we can write down an action’s arguments in the component definition, but we have no guarantee that what we pass into a template matches that or that what we supply to an action is what it should be. I’ve had some early discussions with folks including core GlimmerJS developers about how we might work some magic there, and one of my own tasks at work for the next several months includes further exploration on that… but it's still a ways out.
+
+---
+
+## TypeScript in Ember
+### [fit] sending actions === 😬
+
+TypeScript also *cannot* help us with:
+
+- `this.sendAction`
+- `this.send`
+
+---
+
+## TypeScript in Ember
+
+<br>
+
+### [fit] `Ember.Object`
+### [fit] (and everything related)
+
+---
+
+## TypeScript in Ember
+### `Ember.Object` (and everything related)
+
+[.code-highlight: 1]
+
+```ts
+import EmberObject from '@ember/object';
+
+const OldSchoolPerson = EmberObject.extend({
+  firstName: undefined as string | undefined,
+  lastName: undefined as string | undefined,
+});
+
+class NewSchoolPerson extends EmberObject {
+  firstName?: string;
+  lastName?: string;
+}
+```
+
+^We *can* use EmberObject with TypeScript, but there are some important caveats. Let's talk through those for a minute. First, we important it like normal.
+
+---
+
+## TypeScript in Ember
+### `Ember.Object` (and everything related)
+
+[.code-highlight: 1-6]
+
+```ts
+import EmberObject from '@ember/object';
+
+const OldSchoolPerson = EmberObject.extend({
+  firstName: undefined as string | undefined,
+  lastName: undefined as string | undefined,
+});
+
+class NewSchoolPerson extends EmberObject {
+  firstName?: string;
+  lastName?: string;
+}
+```
+
+^Then we *can* use it with the old `.extend` approach. But… it's kind of a mess, honestly. We have to write some *weird* type annotations if things are optional, and (though I'm not showing it here), stuff basically just falls down—especially in places like computed property definitions. This is a function of the fact that Ember's object model is *extremely* dynamic and long precedes ES6 classes.
+
+---
+
+## TypeScript in Ember
+### `Ember.Object` (and everything related)
+
+[.code-highlight: 1, 8-11]
+
+```ts
+import EmberObject from '@ember/object';
+
+const OldSchoolPerson = EmberObject.extend({
+  firstName: undefined as string | undefined,
+  lastName: undefined as string | undefined,
+});
+
+class NewSchoolPerson extends EmberObject {
+  firstName?: string;
+  lastName?: string;
+}
+```
+
+^So a better solution is to use the `class extends` style. This works! However, there are a couple things that can throw you for a loop here.
+
+---
+
+## TypeScript in Ember
+### `Ember.Object` (and everything related)
+
+- you *must* still use `init`
+    - but `super.init()` not `this._super()`
+- you *must* use decorators
+- class properties are *not* what you might think
+
+^Unlike all other classes, you *must* still use `init` if you want your class to get set up correctly. We did some work with the Ember Framework Core team to make `constructor` largely do the right thing (that came out in 3.6), but there were still a lot of edge cases.
+
+^Second, you basically *must* use decorators. We'll see this in detail (and I'll explain them as we see them) in the working part of the session, but I wanted to mention it now!
+
+^Third, class properties are *not* the same as your normal default values in the old EmberObject world. Let's see an example.
+
+---
+
+## TypeScript in Ember
+### `Ember.Object` (and everything related)
+#### [fit] Class properties are *not* what you might think
+
+The old way…
+
+[.code-highlight: 1-5]
+
+```ts
+import EmberObject from '@ember/object';
+
+const TheOldWay = EmberObject.extend({
+  aBadIdea: [], // FOOTGUN!
+});
+
+class TheNewWay extends EmberObject {
+  aGoodIdea = []; // FINE!
+}
+```
+
+---
+
+## TypeScript in Ember
+### `Ember.Object` (and everything related)
+#### [fit] Class properties are *not* what you might think
+
+The new way…
+
+[.code-highlight: 1, 7-9]
+
+```ts
+import EmberObject from '@ember/object';
+
+const TheOldWay = EmberObject.extend({
+  aBadIdea: [], // FOOTGUN!
+});
+
+class TheNewWay extends EmberObject {
+  aGoodIdea = []; // FINE!
+}
+```
+
+^With a class property, though, this isn't a problem. We're not putting an item on a newly defined prototype, we're setting an *instance* property.
+
+---
+
+## TypeScript in Ember
+### `Ember.Object` (and everything related)
+#### [fit] Class properties are *not* what you might think
+
+```ts
+class Breakfast {
+  waffles = 'are tasty';
+}
+
+class Breakfast {
+  waffles: string;
+  constructor() {
+    this.waffles = 'are tasty';
+  }
+}
+```
+
+^In fact, these are exactly equivalent, and this is very important.
+
+---
+
+## TypeScript in Ember
+<br>
+### [fit] **Exceptions** and **Workarounds**
+
+Some things don’t yet work like this, though.
+Even in Octane. 🤕
+
+---
+
+## TypeScript in Ember
+### Exceptions and Workarounds
+#### [fit] Exception #1: Ember Data
+
+```ts
+import DS from 'ember-data';
+import ComputedProperty from '@ember/object/computed';
+import Metadata from 'my-app/lib/user/metadata';
+
+export default class User extends DS.Model.extend({
+	primaryName: DS.attr('string'),
+	age: DS.attr('number'),
+	metadata: DS.attr() as ComputedProperty<Metadata>
+});
+```
+
+^The biggest problem here is Ember Data, where classes do not work *at all* without decorators. To work around this, we use the “put it all in the `.extend()` hash” trick, while still giving ourselves a named type. We *also* have to add type annotations where we don’t have a specific `DS.Transform` to point to. Here, we might know the type of a user’s “metadata” from elsewhere in the app; we just pull that type in to use with it.
+
+^As an aside: *anywhere* we need to declare that a given item will be a computed property, this is how to do it. And in our app we actually usually use `CP` as the import name, but I wrote it out explicitly here to be clear.
+
+---
+
+## TypeScript in Ember
+### Exceptions and Workarounds
+#### [fit] Exception #2: Ember CLI Mirage
+
+```ts
+import Mirage, { faker } from 'ember-cli-mirage';
+
+export default class User extends Mirage.Factory.extend({
+	firstName: faker.name.firstName(),
+	lastName: faker.name.lastName(),
+}) {}
+```
+
+^Most of the same considerations apply with Mirage, and apparently for the same kinds underlying reasons. We use the same trick to get around it: add a class that `extends` from a normal `Mirage.Factory.extend()` invocation. That way we can use the actual class name and type and shape where we need it. I and James have both independently worked on getting good types for Mirage in place in apps we've worked on, and I hope we can land those in open-source—perhaps as part of Mirage's upcoming 1.0 push.
+
+---
+
+## TypeScript in Ember
+### Exceptions and Workarounds
+#### [fit] Workaround: "Type Registries"
+
+^This brings us to the last thing we need to talk about, a weird thing you will see when using the TypeScript generators: a *type registry*.
+
+---
+
+## TypeScript in Ember
+### Exceptions and Workarounds
+#### Workaround: "Type Registries"
+
+```ts
+import { inject as service } from '@ember/service';
+import Component from '@glimmer/component';
+import DS from 'ember-data';
+import User from 'my-app/models/user';
+
+export default class UserProfile extends Component<User> {
+  @service store!: DS.Store;
+
+  @action updateEmail(email: string) {
+    const user: User = this.store.peekRecord('user', this.args.id);
+    //        ╰this╯
+  }
+}
+```
+
+^We want to be able to avoid massive boilerplate that TS *should* just understand everywhere.
+
+---
+
+## TypeScript in Ember
+### Exceptions and Workarounds
+#### Workaround: "Type Registries"
+
+[.code-highlight: 10-11]
+
+```ts
+import { inject as service } from '@ember/service';
+import Component from '@glimmer/component';
+import DS from 'ember-data';
+import User from 'my-app/models/user';
+
+export default class UserProfile extends Component<User> {
+  @service store!: DS.Store;
+
+  @action updateEmail(email: string) {
+    const user: User = this.store.peekRecord('user', this.args.id);
+    //    ╰────────╯
+  }
+}
+```
+
+^Here, we have to write a type annotation so that we know what kind of thing we're dealing with. This is both error prone – we could write the type annotation wrong! – and annoyingly repetitive.
+
+---
+
+## TypeScript in Ember
+### Exceptions and Workarounds
+#### Workaround: "Type Registries"
+
+[.code-highlight: 10-11]
+
+```ts
+import { inject as service } from '@ember/service';
+import Component from '@glimmer/component';
+import DS from 'ember-data';
+import User from 'my-app/models/user';
+
+export default class UserProfile extends Component<User> {
+  @service store!: DS.Store;
+
+  @action updateEmail(email: string) {
+    const user = this.store.peekRecord('user', this.args.id);   //
+    //    ╰──╯
+  }
+}
+```
+
+^If we use a type registry, we can make it so we don't need that. Typing `peekRecord('user', ...)` just does the right thing: TypeScript understands at compile time what Ember understands at run time. It's less error prone and it's less annoying!
+
+---
+
+## TypeScript in Ember
+### Exceptions and Workarounds
+#### Workaround: "Type Registries"
+#### An example Ember Data registry entry
+
+```ts
+import DS from 'ember-data';
+
+export default class User extends DS.Model {
+  @attr('string') email!: string;
+}
+
+// DO NOT DELETE: this is how TypeScript knows how to look up your models.
+declare module 'ember-data/types/registries/model' {
+  export default interface ModelRegistry {
+    'user': User;
+  }
+}
+```
+
+^With just this, we’ve integrated our model into the registry! Most apps will end up having a *bunch* of files with these: basically, all your model definitions. This leans hard on a couple tricks the TypeScript compiler has up its sleeve: it will automatically merge *modules* and *interfaces* if you declare them in separate places. By having this registry, we can tell TypeScript in the official Ember Typings that when you write `store.find('user')` or similar, what it returns is the type that this registry says the `"user"` key gets – so, here, the `User` model! And we pull the exact same trick with services, controllers, and Ember Data, adapters, serializers, etc.
+
+---
+
+<br>
+
+## [fit] TypeScript in Ember
+
+Mostly just normal TypeScript!
+
+…except for EmberObject and Ember Data and Mirage!
+
+---
+
+<br>
+
+## [fit] TypeScript in Ember
+### [fit] **Questions?**
+
+---
+
+## [fit] **Break!**
+
+<br>
+
+### [fit] Water 🚰
+### [fit] stretch 🙆‍♀️ 🙆‍♂️
+### [fit] bathroom 🚽…
